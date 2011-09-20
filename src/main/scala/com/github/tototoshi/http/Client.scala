@@ -1,20 +1,20 @@
 package com.github.tototoshi.http
 
-import java.io.{File, BufferedReader, InputStream, InputStreamReader}
+import java.io.{ File, BufferedReader, InputStream, InputStreamReader }
 import java.net.ProxySelector
 import java.util.ArrayList
 import org.apache.http.client.entity.UrlEncodedFormEntity
-import org.apache.http.client.methods.{HttpGet, HttpPost}
+import org.apache.http.client.methods.{ HttpGet, HttpPost }
 import org.apache.http.client.utils.URLEncodedUtils
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner
 import org.apache.http.message.BasicNameValuePair
-import org.apache.http.{HttpResponse, NameValuePair, HttpEntity}
+import org.apache.http.{ HttpResponse, NameValuePair, HttpEntity }
 import org.apache.http.util.EntityUtils
 
 trait Using {
-  type Closable = {def close():Unit}
-  def using[A <: Closable,B](resource:A)(f:A => B) = {
+  type Closable = { def close(): Unit }
+  def using[A <: Closable, B](resource: A)(f: A => B) = {
     try {
       f(resource)
     } finally {
@@ -23,17 +23,16 @@ trait Using {
   }
 }
 
-class Client extends Using{
+class Client extends Using {
   val httpClient = new DefaultHttpClient()
   val routePlanner = new ProxySelectorRoutePlanner(
-    httpClient.getConnectionManager.getSchemeRegistry, ProxySelector.getDefault
-  )
+    httpClient.getConnectionManager.getSchemeRegistry, ProxySelector.getDefault)
   httpClient.setRoutePlanner(routePlanner)
 
   private def constructNameValuePairs(data: Map[String, String]): ArrayList[NameValuePair] = {
     data.foldLeft(new ArrayList[NameValuePair](data.size)) {
       case (pairs, (k, v)) => { pairs.add(new BasicNameValuePair(k, v)); pairs }
-   }
+    }
   }
 
   def GET(url: String, param: Map[String, String] = Map(), encoding: String = "UTF-8"): Response = {
@@ -59,7 +58,7 @@ class Client extends Using{
       EntityUtils.toString(httpResponse.getEntity, charset)
     }
     def save(filename: String): Unit = save(new File(filename))
-    def save(file: File) : Unit = {
+    def save(file: File): Unit = {
       using(new java.io.BufferedInputStream(httpResponse.getEntity.getContent)) { in =>
         using(new java.io.PrintStream(file)) { out =>
           val buffer = new Array[Byte](8192)
