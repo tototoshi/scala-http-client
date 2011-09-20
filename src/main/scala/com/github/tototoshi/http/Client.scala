@@ -1,6 +1,6 @@
 package com.github.tototoshi.http
 
-import java.io.{BufferedReader, InputStream, InputStreamReader}
+import java.io.{File, BufferedReader, InputStream, InputStreamReader}
 import java.net.ProxySelector
 import java.util.ArrayList
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -10,6 +10,7 @@ import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.{HttpResponse, NameValuePair, HttpEntity}
+import org.apache.http.util.EntityUtils
 
 trait Using {
   type Closable = {def close():Unit}
@@ -49,17 +50,25 @@ class Client extends Using{
 
   class Response(httpResponse: HttpResponse) {
     def statusCode(): Int = {
-      using(httpResponse.getEntity.getContent) { in =>
-        httpResponse.getStatusLine.getStatusCode
-      }
+      EntityUtils.toString(httpResponse.getEntity)
+      EntityUtils.consume(httpResponse.getEntity)
+      httpResponse.getStatusLine.getStatusCode
     }
     def asString(): String = asString("UTF-8")
     def asString(charset: String): String = {
-      using(httpResponse.getEntity.getContent) { in =>
-        val builder = new StringBuilder
-        val br = new BufferedReader(new InputStreamReader(in, charset))
-        Stream.continually(br.readLine).takeWhile(_ != null).foldLeft(builder){_.append(_)}.toString
+      EntityUtils.toString(httpResponse.getEntity, charset)
+    }
+    def save(filename: String): Unit = save(new File(filename))
+    def save(file: File) : Unit = {
+      using(new java.io.BufferedInputStream(httpResponse.getEntity.getContent)) { in =>
+        using(new java.io.PrintStream(file)) { out =>
+          val buffer = new Array[Byte](8192)
+          Stream.continually(in.read(buffer)).takeWhile(_ >= 0) foreach {
+            out.write(buffer, 0, _)
+          }
+        }
       }
     }
   }
+
 }
