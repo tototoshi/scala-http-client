@@ -4,7 +4,7 @@ import java.io.{ File, BufferedReader, InputStream, InputStreamReader }
 import java.net.ProxySelector
 import java.util.ArrayList
 import org.apache.http.client.entity.UrlEncodedFormEntity
-import org.apache.http.client.methods.{ HttpGet, HttpPost }
+import org.apache.http.client.methods.{ HttpGet, HttpPost, HttpUriRequest }
 import org.apache.http.client.utils.URLEncodedUtils
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner
@@ -35,14 +35,16 @@ class Client extends Using {
     }
   }
 
-  def GET(url: String, param: Map[String, String] = Map(), encoding: String = "UTF-8"): Response = {
+  def GET(url: String, param: Map[String, String] = Map(), header: Map[String, String] = Map(), encoding: String = "UTF-8"): Response = {
     val urlWithParams = if (param.isEmpty) url else url + "?" + URLEncodedUtils.format(constructNameValuePairs(param), encoding)
     val request = new HttpGet(urlWithParams)
+    header foreach { case (k, v) => request.addHeader(k, v) }
     new Response(httpClient.execute(request))
   }
 
-  def POST(url: String, params: Map[String, String] = Map()): Response = {
+  def POST(url: String, params: Map[String, String] = Map(), header: Map[String, String] = Map()): Response = {
     val request = new HttpPost(url)
+    header foreach { case (k, v) => request.addHeader(k, v) }
     request.setEntity(new UrlEncodedFormEntity(constructNameValuePairs(params)))
     new Response(httpClient.execute(request))
   }
