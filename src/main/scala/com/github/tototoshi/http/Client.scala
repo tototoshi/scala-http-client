@@ -49,7 +49,6 @@ class Client extends Using {
 
   class Response(httpResponse: HttpResponse) {
     def statusCode(): Int = {
-      EntityUtils.toString(httpResponse.getEntity)
       EntityUtils.consume(httpResponse.getEntity)
       httpResponse.getStatusLine.getStatusCode
     }
