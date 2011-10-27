@@ -29,7 +29,7 @@ class Client extends Using {
     httpClient.getConnectionManager.getSchemeRegistry, ProxySelector.getDefault)
   httpClient.setRoutePlanner(routePlanner)
 
-  private def constructNameValuePairs(data: Map[String, String]): ArrayList[NameValuePair] = {
+  private def constructNameValuePairs(data: Map[String, String]): JList[NameValuePair] = {
     data.foldLeft(new ArrayList[NameValuePair](data.size)) {
       case (pairs, (k, v)) => { pairs.add(new BasicNameValuePair(k, v)); pairs }
     }
