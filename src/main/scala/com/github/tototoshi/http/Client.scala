@@ -2,7 +2,7 @@ package com.github.tototoshi.http
 
 import java.io.{ File, BufferedReader, InputStream, InputStreamReader }
 import java.net.ProxySelector
-import java.util.ArrayList
+import java.util.{ ArrayList, List => JList }
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.{ HttpGet, HttpPost, HttpUriRequest }
 import org.apache.http.client.utils.URLEncodedUtils
