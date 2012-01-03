@@ -11,7 +11,8 @@ import org.apache.http.impl.conn.ProxySelectorRoutePlanner
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.{ HttpResponse, NameValuePair, HttpEntity }
 import org.apache.http.util.EntityUtils
-
+import net.liftweb.json.JsonParser._
+import net.liftweb.json.JValue
 trait Using {
   type Closable = { def close(): Unit }
   def using[A <: Closable, B](resource: A)(f: A => B) = {
@@ -60,6 +61,7 @@ class Client extends Using {
       EntityUtils.consume(httpResponse.getEntity)
       res
     }
+    def asJson(): JValue = parse(asString)
     def save(filename: String): Unit = save(new File(filename))
     def save(file: File): Unit = {
       using(new java.io.BufferedInputStream(httpResponse.getEntity.getContent)) { in =>

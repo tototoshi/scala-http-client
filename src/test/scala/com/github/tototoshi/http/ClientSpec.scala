@@ -3,6 +3,7 @@ package com.github.tototoshi.http
 import org.specs2._
 import scala.io.Source
 import java.io.File
+import net.liftweb.json.JsonAST._
 
 class ClientSpec extends Specification { def is =
 
@@ -11,11 +12,12 @@ class ClientSpec extends Specification { def is =
     "200 as a status code"                                                 ! statuscode ^
     "'It is a truth...'"                                                   ! resultString ^
     "client.GET(url).save(filename) save the contents to filename"         ! save1 ^
+    "get response as json"                                                 ! getJson ^
                                                                            p^
   "Client.POST get"                                                        ^
     "200 as a status code"                                                 ! statuscode2 ^
     "'It is a truth...'"                                                   ! resultString2 ^
-    "client.POST(url).save(filename) save the contents to filename"        ! save2 ^end
+    "client.POST(url).save(filename) save the contents to filename"        ! save2 ^ end
 
   val jane = "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.\n"
   val testserver = "http://technically.us/test.text"
@@ -39,4 +41,14 @@ class ClientSpec extends Specification { def is =
     file.delete()
     contents must be equalTo(jane.substring(0, jane.length - 1))
   }
+
+  def getJson = {
+    val JArray(items) = client.GET("https://api.github.com/gists") asJson
+    val gitPushUrl = (for {
+      JObject(item) <- items
+      JField("git_push_url", JString(value)) <- item
+    } yield value).head
+    gitPushUrl must be startWith "git@gist.github.com"
+  }
+
 }
