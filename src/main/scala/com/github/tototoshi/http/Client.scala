@@ -29,23 +29,23 @@ class Client extends Using {
     httpClient.getConnectionManager.getSchemeRegistry, ProxySelector.getDefault)
   httpClient.setRoutePlanner(routePlanner)
 
-  private def constructNameValuePairs(data: Map[String, String]): JList[NameValuePair] = {
+  private def constructNameValuePairs(data: Iterable[(String, String)]): JList[NameValuePair] = {
     data.foldLeft(new ArrayList[NameValuePair](data.size)) {
       case (pairs, (k, v)) => { pairs.add(new BasicNameValuePair(k, v)); pairs }
     }
   }
 
-  def GET(url: String, param: Map[String, String] = Map(), header: Map[String, String] = Map(), encoding: String = "UTF-8"): Response = {
+  def GET(url: String, param: Iterable[(String, String)] = Map(), header: Map[String, String] = Map(), encoding: String = "UTF-8"): Response = {
     val urlWithParams = if (param.isEmpty) url else url + "?" + URLEncodedUtils.format(constructNameValuePairs(param), encoding)
     val request = new HttpGet(urlWithParams)
     header foreach { case (k, v) => request.addHeader(k, v) }
     new Response(httpClient.execute(request))
   }
 
-  def POST(url: String, params: Map[String, String] = Map(), header: Map[String, String] = Map()): Response = {
+  def POST(url: String, params: Iterable[(String, String)] = Map(), header: Map[String, String] = Map(), encoding: String = "UTF-8"): Response = {
     val request = new HttpPost(url)
     header foreach { case (k, v) => request.addHeader(k, v) }
-    request.setEntity(new UrlEncodedFormEntity(constructNameValuePairs(params)))
+    request.setEntity(new UrlEncodedFormEntity(constructNameValuePairs(params), encoding))
     new Response(httpClient.execute(request))
   }
 
@@ -56,7 +56,9 @@ class Client extends Using {
     }
     def asString(): String = asString("UTF-8")
     def asString(charset: String): String = {
-      EntityUtils.toString(httpResponse.getEntity, charset)
+      val res = EntityUtils.toString(httpResponse.getEntity, charset)
+      EntityUtils.consume(httpResponse.getEntity)
+      res
     }
     def save(filename: String): Unit = save(new File(filename))
     def save(file: File): Unit = {
