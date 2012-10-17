@@ -25,7 +25,7 @@ trait Using {
   }
 }
 
-class Client extends Using {
+class Client {
   private def httpClient = {
     val c = new DefaultHttpClient()
     val routePlanner = new ProxySelectorRoutePlanner(
