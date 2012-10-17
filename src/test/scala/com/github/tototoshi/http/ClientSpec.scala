@@ -7,7 +7,7 @@ import net.liftweb.json.JsonAST._
 
 class ClientSpec extends Specification { def is =
 
-  sequential ^
+
   "Client.GET get"                                                         ^
     "200 as a status code"                                                 ! statuscode ^
     "'It is a truth...'"                                                   ! resultString ^

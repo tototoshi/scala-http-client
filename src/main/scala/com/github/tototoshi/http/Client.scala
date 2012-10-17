@@ -25,10 +25,13 @@ trait Using {
 }
 
 class Client extends Using {
-  val httpClient = new DefaultHttpClient()
-  val routePlanner = new ProxySelectorRoutePlanner(
-    httpClient.getConnectionManager.getSchemeRegistry, ProxySelector.getDefault)
-  httpClient.setRoutePlanner(routePlanner)
+  def httpClient = {
+    val c = new DefaultHttpClient()
+    val routePlanner = new ProxySelectorRoutePlanner(
+      c.getConnectionManager.getSchemeRegistry, ProxySelector.getDefault)
+    c.setRoutePlanner(routePlanner)
+    c
+  }
 
   private def constructNameValuePairs(data: Iterable[(String, String)]): JList[NameValuePair] = {
     data.foldLeft(new ArrayList[NameValuePair](data.size)) {
@@ -76,3 +79,4 @@ class Client extends Using {
   }
 
 }
+
