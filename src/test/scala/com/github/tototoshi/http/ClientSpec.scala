@@ -23,27 +23,27 @@ class ClientSpec extends Specification { def is =
   val testserver = "http://technically.us/test.text"
 
   val client = new Client
-  def statuscode = client.GET(testserver).statusCode must be equalTo(200)
-  def statuscode2 = client.POST(testserver).statusCode must be equalTo(200)
-  def resultString = client.GET(testserver).asString must be equalTo(jane)
-  def resultString2 = client.POST(testserver).asString must be equalTo(jane)
+  def statuscode = client.GET(testserver).execute().statusCode must be equalTo(200)
+  def statuscode2 = client.POST(testserver).execute().statusCode must be equalTo(200)
+  def resultString = client.GET(testserver).execute().asString must be equalTo(jane)
+  def resultString2 = client.POST(testserver).execute().asString must be equalTo(jane)
   def save1 = {
     val file = new File("7fb9b160-d703-47d3-a459-621b80e48b1d")
-    client.POST(testserver).save(file)
+    client.POST(testserver).execute.save(file)
     val contents = Source.fromFile(file).getLines.mkString("\n")
     file.delete()
     contents must be equalTo(jane.substring(0, jane.length - 1))
   }
   def save2 = {
     val file = new File("c95a694d-b240-4ae5-a92f-e50b32e238f1")
-    client.GET(testserver).save(file)
+    client.GET(testserver).execute.save(file)
     val contents = Source.fromFile(file).getLines.mkString
     file.delete()
     contents must be equalTo(jane.substring(0, jane.length - 1))
   }
 
   def getJson = {
-    val JArray(items) = client.GET("https://api.github.com/gists") asJson
+    val JArray(items) = client.GET("https://api.github.com/gists").execute().asJson
     val gitPushUrl = (for {
       JObject(item) <- items
       JField("git_push_url", JString(value)) <- item

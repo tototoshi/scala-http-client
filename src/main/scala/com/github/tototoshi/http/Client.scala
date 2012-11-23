@@ -1,18 +1,13 @@
 package com.github.tototoshi.http
 
-import java.io.{ File, BufferedReader, InputStream, InputStreamReader }
 import java.net.ProxySelector
-import java.util.{ ArrayList, List => JList }
-import org.apache.http.client.entity.UrlEncodedFormEntity
-import org.apache.http.client.methods.{ HttpGet, HttpPost, HttpUriRequest }
-import org.apache.http.client.utils.URLEncodedUtils
+import org.apache.http.client.HttpClient
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner
-import org.apache.http.message.BasicNameValuePair
-import org.apache.http.{ NameValuePair, HttpEntity }
+import org.apache.http.NameValuePair
 
 class Client {
-  private def httpClient = {
+  private def _client = {
     val c = new DefaultHttpClient()
     val routePlanner = new ProxySelectorRoutePlanner(
       c.getConnectionManager.getSchemeRegistry, ProxySelector.getDefault)
@@ -20,26 +15,13 @@ class Client {
     c
   }
 
-  private def constructNameValuePairs(data: Iterable[(String, String)]): JList[NameValuePair] = {
-    data.foldLeft(new ArrayList[NameValuePair](data.size)) {
-      case (pairs, (k, v)) => { pairs.add(new BasicNameValuePair(k, v)); pairs }
-    }
-  }
+  def get(url: String): Request = new UrlEncodedGetRequest(_client, url)
 
-  def GET(url: String, param: Iterable[(String, String)] = Map(), header: Map[String, String] = Map(), encoding: String = "UTF-8"): Response = {
-    val urlWithParams = if (param.isEmpty) url else url + "?" + URLEncodedUtils.format(constructNameValuePairs(param), encoding)
-    val request = new HttpGet(urlWithParams)
-    header foreach { case (k, v) => request.addHeader(k, v) }
-    new Response(httpClient.execute(request))
-  }
+  def post(url: String): Request = new UrlEncodedPostRequest(_client, url)
 
-  def POST(url: String, params: Iterable[(String, String)] = Map(), header: Map[String, String] = Map(), encoding: String = "UTF-8"): Response = {
-    val request = new HttpPost(url)
-    header foreach { case (k, v) => request.addHeader(k, v) }
-    request.setEntity(new UrlEncodedFormEntity(constructNameValuePairs(params), encoding))
-    new Response(httpClient.execute(request))
-  }
+  def postMultiPart(url: String): MultiPartPostRequest = new MultiPartPostRequest(_client, url)
 
 }
+
 
 
