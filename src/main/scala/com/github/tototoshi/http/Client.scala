@@ -11,17 +11,6 @@ import org.apache.http.impl.conn.ProxySelectorRoutePlanner
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.{ NameValuePair, HttpEntity }
 
-trait Using {
-  type Closable = { def close(): Unit }
-  def using[A <: Closable, B](resource: A)(f: A => B) = {
-    try {
-      f(resource)
-    } finally {
-      resource.close
-    }
-  }
-}
-
 class Client {
   private def httpClient = {
     val c = new DefaultHttpClient()
