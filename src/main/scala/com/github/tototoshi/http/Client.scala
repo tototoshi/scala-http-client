@@ -7,6 +7,7 @@ import org.apache.http.impl.conn.ProxySelectorRoutePlanner
 import org.apache.http.NameValuePair
 
 class Client {
+
   private def _client = {
     val c = new DefaultHttpClient()
     val routePlanner = new ProxySelectorRoutePlanner(
@@ -22,6 +23,3 @@ class Client {
   def postMultiPart(url: String): MultiPartPostRequest = new MultiPartPostRequest(_client, url)
 
 }
-
-
-
