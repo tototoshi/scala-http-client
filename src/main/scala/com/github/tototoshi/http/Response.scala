@@ -3,8 +3,8 @@ package com.github.tototoshi.http
 import org.apache.http.HttpResponse
 import org.apache.http.util.EntityUtils
 import java.io.File
-import net.liftweb.json.JsonParser._
-import net.liftweb.json.JValue
+import org.json4s._
+import org.json4s.native.JsonMethods._
 
 class Response(httpResponse: HttpResponse) extends Using {
   def statusCode(): Int = {
