@@ -5,7 +5,9 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.mime.{ MultipartEntity, HttpMultipartMode }
 import org.apache.http.entity.mime.content.{ StringBody, FileBody }
 
-class MultiPartPostRequest(client: HttpClient, url: String) extends MultiPartRequest with MultiPartRequestBuilder {
+class MultiPartPostRequest(client: HttpClient, url: String)
+    extends MultiPartRequest
+    with MultiPartRequestBuilder {
 
   def execute(): Response = {
     val httpPost = new HttpPost(url)
