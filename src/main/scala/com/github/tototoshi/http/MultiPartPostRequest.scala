@@ -21,7 +21,7 @@ import org.apache.http.client.utils.URIBuilder
 import org.apache.http.entity.mime.{ MultipartEntity, HttpMultipartMode }
 import org.apache.http.entity.mime.content.{ StringBody, FileBody }
 
-class MultiPartPostRequest(client: HttpClient, url: String)
+private[http] class MultiPartPostRequest(client: HttpClient, url: String)
     extends MultiPartRequest
     with MultiPartRequestBuilder {
 

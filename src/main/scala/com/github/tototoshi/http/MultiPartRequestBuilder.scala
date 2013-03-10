@@ -15,7 +15,8 @@
  */
 package com.github.tototoshi.http
 
-trait MultiPartRequestBuilder extends RequestBuilder { self: MultiPartRequest =>
+private[http] trait MultiPartRequestBuilder
+    extends RequestBuilder { self: MultiPartRequest =>
 
   def part[A](key: String, value: A)(implicit converter: PartConverter[A]): this.type = {
     parts :+= converter.convert(key, value)

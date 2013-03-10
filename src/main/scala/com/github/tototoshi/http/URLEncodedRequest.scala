@@ -21,7 +21,7 @@ import org.apache.http.client.utils.URLEncodedUtils
 import org.apache.http.client.HttpClient
 import org.apache.http.client.utils.URIBuilder
 
-class UrlEncodedGetRequest(client: HttpClient, url: String)
+private[http] class UrlEncodedGetRequest(client: HttpClient, url: String)
     extends RequestBuilder
     with Request {
 
@@ -35,7 +35,7 @@ class UrlEncodedGetRequest(client: HttpClient, url: String)
 
 }
 
-class UrlEncodedPostRequest(client: HttpClient, url: String)
+private[http] class UrlEncodedPostRequest(client: HttpClient, url: String)
     extends RequestBuilder
     with Request {
 
