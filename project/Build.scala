@@ -39,7 +39,8 @@ object ScalaHttpClientBuild extends Build {
         "org.scalatest" %% "scalatest" % "1.9.1" % "test",
         "net.databinder" %% "unfiltered-filter" % unfilteredVersion % "test",
         "net.databinder" %% "unfiltered-jetty" % unfilteredVersion % "test"
-      )
+      ),
+      initialCommands += "import com.github.tototoshi.http._"
     ) ++ scalariformSettings
   )
 }
