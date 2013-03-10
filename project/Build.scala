@@ -38,7 +38,9 @@ object ScalaHttpClientBuild extends Build {
         "org.json4s" %% "json4s-native" % json4sVersion,
         "org.scalatest" %% "scalatest" % "1.9.1" % "test",
         "net.databinder" %% "unfiltered-filter" % unfilteredVersion % "test",
-        "net.databinder" %% "unfiltered-jetty" % unfilteredVersion % "test"
+        "net.databinder" %% "unfiltered-jetty" % unfilteredVersion % "test",
+        "net.databinder" %% "unfiltered-uploads" % unfilteredVersion % "test",
+        "net.databinder" %% "unfiltered-filter-uploads" % unfilteredVersion % "test"
       ),
       initialCommands += "import com.github.tototoshi.http._"
     ) ++ scalariformSettings

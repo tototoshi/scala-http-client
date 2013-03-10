@@ -35,6 +35,6 @@ class Client {
 
   def post(url: String): RequestBuilder = new UrlEncodedPostRequest(_client, url)
 
-  def postMultiPart(url: String): RequestBuilder = new MultiPartPostRequest(_client, url)
+  def postMultiPart(url: String): MultiPartRequestBuilder = new MultiPartPostRequest(_client, url)
 
 }

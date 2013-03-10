@@ -22,8 +22,7 @@ import org.apache.http.entity.mime.{ MultipartEntity, HttpMultipartMode }
 import org.apache.http.entity.mime.content.{ StringBody, FileBody }
 
 private[http] class MultiPartPostRequest(client: HttpClient, url: String)
-    extends MultiPartRequest
-    with MultiPartRequestBuilder {
+    extends MultiPartRequestBuilder {
 
   def execute(): Response = {
     val uriBuilder = new URIBuilder(url)

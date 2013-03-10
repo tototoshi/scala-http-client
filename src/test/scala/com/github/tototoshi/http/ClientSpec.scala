@@ -17,18 +17,27 @@ package com.github.tototoshi.http
 
 import org.scalatest.FunSpec
 import org.scalatest.matchers._
-
+import scala.io.Source
+import java.io.File
 import unfiltered.filter._
+import unfiltered.filter.request._
 import unfiltered.request._
 import unfiltered.response._
 
-class ClientSpec extends FunSpec with ShouldMatchers with MockServer {
+class ClientSpec extends FunSpec
+    with ShouldMatchers
+    with MockServer {
 
   val plan = Planify {
     case GET(Path("/foo")) => { ResponseString("foo") }
     case POST(Path("/bar")) => { ResponseString("bar") }
     case GET(Path("/params")) & Params(params) => { ResponseString(params("a").head) }
     case POST(Path("/params")) & Params(params) => { ResponseString(params("a").head) }
+    case POST(Path("/upload")) & MultiPart(req) => {
+      val MultipartData(params, files) = MultiPartParams.Memory(req)
+      val fileContent = new String(files("file").head.bytes, "utf-8").trim
+      ResponseString(fileContent + ":" + params("a").head)
+    }
   }
 
   describe("Client") {
@@ -61,8 +70,12 @@ class ClientSpec extends FunSpec with ShouldMatchers with MockServer {
 
     it("should post multipart request") {
       withMockServer(plan) { port =>
-        val req = new Client().postMultiPart("http://localhost:" + port + "/params").param("a", "b")
-        req.execute.asString should be("b")
+        val req = new Client()
+          .postMultiPart("http://localhost:" + port + "/upload")
+          .part("a", "b")
+          .part("file", new File("src/test/resources/upload-test.txt"))
+
+        req.execute.asString should be("chakapoko chakapoko:b")
       }
     }
 
