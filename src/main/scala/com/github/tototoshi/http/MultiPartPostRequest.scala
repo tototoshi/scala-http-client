@@ -17,6 +17,7 @@ package com.github.tototoshi.http
 
 import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpPost
+import org.apache.http.client.utils.URIBuilder
 import org.apache.http.entity.mime.{ MultipartEntity, HttpMultipartMode }
 import org.apache.http.entity.mime.content.{ StringBody, FileBody }
 
@@ -25,8 +26,13 @@ class MultiPartPostRequest(client: HttpClient, url: String)
     with MultiPartRequestBuilder {
 
   def execute(): Response = {
-    val httpPost = new HttpPost(url)
+    val uriBuilder = new URIBuilder(url)
+    params.foreach { case (name, value) => uriBuilder.setParameter(name, value) }
+
+    val request = new HttpPost(uriBuilder.build)
     val reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE)
+
+    headers.foreach { case (k, v) => request.addHeader(k, v) }
 
     for (part <- parts) {
       part match {
@@ -35,9 +41,9 @@ class MultiPartPostRequest(client: HttpClient, url: String)
       }
     }
 
-    httpPost.setEntity(reqEntity)
+    request.setEntity(reqEntity)
 
-    new Response(client.execute(httpPost))
+    new Response(client.execute(request))
   }
 
 }

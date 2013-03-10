@@ -35,27 +35,34 @@ class ClientSpec extends FunSpec with ShouldMatchers with MockServer {
 
     it("should get") {
       withMockServer(plan) { port =>
-        new Client().get("http://localhost:" + port + "/foo").execute.asString should be ("foo")
+        new Client().get("http://localhost:" + port + "/foo").execute.asString should be("foo")
       }
     }
 
     it("should get with params") {
       withMockServer(plan) { port =>
-        val req = new Client() .get("http://localhost:" + port + "/params") .param("a", "b")
-        req.execute.asString should be ("b")
+        val req = new Client().get("http://localhost:" + port + "/params").param("a", "b")
+        req.execute.asString should be("b")
       }
     }
 
     it("should post") {
       withMockServer(plan) { port =>
-        new Client().post("http://localhost:" + port + "/bar").execute.asString should be ("bar")
+        new Client().post("http://localhost:" + port + "/bar").execute.asString should be("bar")
       }
     }
 
     it("should post with params") {
       withMockServer(plan) { port =>
         val req = new Client().post("http://localhost:" + port + "/params").param("a", "b")
-        req.execute.asString should be ("b")
+        req.execute.asString should be("b")
+      }
+    }
+
+    it("should post multipart request") {
+      withMockServer(plan) { port =>
+        val req = new Client().postMultiPart("http://localhost:" + port + "/params").param("a", "b")
+        req.execute.asString should be("b")
       }
     }
 
