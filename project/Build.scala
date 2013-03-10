@@ -15,6 +15,7 @@
  */
 import sbt._
 import Keys._
+import com.typesafe.sbt.SbtScalariform._
 
 object ScalaHttpClientBuild extends Build {
 
@@ -39,7 +40,7 @@ object ScalaHttpClientBuild extends Build {
         "net.databinder" %% "unfiltered-filter" % unfilteredVersion % "test",
         "net.databinder" %% "unfiltered-jetty" % unfilteredVersion % "test"
       )
-    )
+    ) ++ scalariformSettings
   )
 }
 
