@@ -19,15 +19,16 @@ import org.apache.http.client.methods.{ HttpGet, HttpPost, HttpUriRequest }
 import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.utils.URLEncodedUtils
 import org.apache.http.client.HttpClient
+import org.apache.http.client.utils.URIBuilder
 
 class UrlEncodedGetRequest(client: HttpClient, url: String)
     extends RequestBuilder
     with Request {
 
   def execute(): Response = {
-    val urlWithParams = if (params.isEmpty) url else url + "?" +
-      URLEncodedUtils.format(constructNameValuePairs(params), _encoding)
-    val request = new HttpGet(urlWithParams)
+    val uriBuilder = new URIBuilder(url)
+    params.foreach { case (name, value) => uriBuilder.setParameter(name, value) }
+    val request = new HttpGet(uriBuilder.build)
     headers.foreach { case (k, v) => request.addHeader(k, v) }
     new Response(client.execute(request))
   }

@@ -19,7 +19,6 @@ import unfiltered.request._
 import unfiltered.response._
 import unfiltered.filter._
 
-
 trait MockServer {
 
   def withMockServer[A](plan: Plan)(f: Int => A) {
