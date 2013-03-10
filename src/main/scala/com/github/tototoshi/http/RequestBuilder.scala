@@ -19,7 +19,7 @@ import java.util.{ ArrayList, List => JList }
 import org.apache.http.message.BasicNameValuePair
 import org.apache.http.NameValuePair
 
-trait RequestBuilder { self: Request =>
+trait RequestBuilder extends Request {
 
   def param(key: String, value: String): this.type = {
     params += (key -> value)

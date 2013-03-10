@@ -31,10 +31,10 @@ class Client {
     c
   }
 
-  def get(url: String): UrlEncodedGetRequest = new UrlEncodedGetRequest(_client, url)
+  def get(url: String): RequestBuilder = new UrlEncodedGetRequest(_client, url)
 
-  def post(url: String): UrlEncodedPostRequest = new UrlEncodedPostRequest(_client, url)
+  def post(url: String): RequestBuilder = new UrlEncodedPostRequest(_client, url)
 
-  def postMultiPart(url: String): MultiPartPostRequest = new MultiPartPostRequest(_client, url)
+  def postMultiPart(url: String): RequestBuilder = new MultiPartPostRequest(_client, url)
 
 }
