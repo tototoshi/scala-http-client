@@ -15,24 +15,11 @@
 */
 package com.github.tototoshi.http
 
+import com.github.tototoshi.http.util.URIBuilder
+
 trait RequestExecutor[M <: Method, T <: ContentType] {
 
   def execute(request: Request[M, T]): Response
-
-}
-
-trait URIBuilder {
-
-  def buildUrl(url: String, params: Map[String, Seq[String]]): java.net.URI = {
-    val uriBuilder = new org.apache.http.client.utils.URIBuilder(url)
-    for {
-      (name, values) <- params
-      value <- values
-    } {
-      uriBuilder.setParameter(name, value)
-    }
-    uriBuilder.build
-  }
 
 }
 
@@ -43,7 +30,7 @@ trait GetRequestExecutor
   import org.apache.http.client.methods.HttpGet
 
   def execute(request: Request[GET, NonType]): Response = {
-    val httpRequest = new HttpGet(buildUrl(request.url, request.params))
+    val httpRequest = new HttpGet(buildURI(request.url, request.params))
     request.headers.foreach { case (k, v) => httpRequest.addHeader(k, v) }
     new Response(request.client.execute(httpRequest))
   }
@@ -59,7 +46,7 @@ trait FormUrlEncodedExecutor
   import org.apache.http.client.HttpClient
 
   def execute(request: Request[POST, FormUrlEncoded]): Response = {
-    val httpRequest = new HttpPost(buildUrl(request.url, request.params))
+    val httpRequest = new HttpPost(buildURI(request.url, request.params))
     request.headers.foreach { case (k, v) => httpRequest.addHeader(k, v) }
     new Response(request.client.execute(httpRequest))
   }
@@ -76,7 +63,7 @@ trait MulitiPartRequestExecutor
   import org.apache.http.entity.mime.content.{ StringBody, FileBody }
 
   def execute(request: Request[POST, MultipartFormData]): Response = {
-    val httpRequest = new HttpPost(buildUrl(request.url, request.params))
+    val httpRequest = new HttpPost(buildURI(request.url, request.params))
     val reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE)
     request.headers.foreach { case (k, v) => httpRequest.addHeader(k, v) }
 
