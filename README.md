@@ -5,7 +5,7 @@ import com.github.tototoshi.http._
 scala> val c = new Client
 c: com.github.tototoshi.http.Client = com.github.tototoshi.http.Client@2c3a9ea0
 
-scala> client.
+scala> c.
      |   get("http://search.twitter.com/search.json").
      |   params("q" -> "scala").
      |   execute.
