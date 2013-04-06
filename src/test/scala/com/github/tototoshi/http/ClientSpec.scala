@@ -56,7 +56,7 @@ class ClientSpec extends FunSpec
       withMockServer(plan) { port =>
         new Client()
           .get(localhost(port) + "/params")
-          .param("a", "b")
+          .params("a" -> "b")
           .execute
           .asString should be("b")
       }
@@ -74,7 +74,7 @@ class ClientSpec extends FunSpec
       withMockServer(plan) { port =>
         new Client()
           .post(localhost(port) + "/params")
-          .param("a", "b")
+          .params("a" -> "b")
           .execute.asString should be("b")
       }
     }
@@ -83,7 +83,7 @@ class ClientSpec extends FunSpec
       withMockServer(plan) { port =>
         new Client()
           .post(localhost(port) + "/upload")
-          .part("a", "b")
+          .part("a" -> "b")
           .part("file", new File("src/test/resources/upload-test.txt"))
           .execute
           .asString should be("chakapoko chakapoko:b")

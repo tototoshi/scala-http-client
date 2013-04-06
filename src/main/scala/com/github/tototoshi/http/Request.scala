@@ -28,15 +28,20 @@ case class Request[M <: Method, T <: ContentType](
     params: Map[String, Seq[String]] = Map.empty,
     encoding: String = "utf-8") {
 
-  def part[A](key: String, value: A)(implicit e: M =:= POST, converter: PartConverter[A]): Request[POST, MultipartFormData] = {
+  def part[A](p: (String, A))(implicit e: M =:= POST, converter: PartConverter[A]): Request[POST, MultipartFormData] = {
+    val (key, value) = p
     this.copy(parts = parts :+ converter.convert(key, value))
   }
 
-  def param(key: String, value: String): Request[M, T] = {
-    this.copy(params = params + (key -> (params.getOrElse(key, Seq.empty[String]) :+ value)))
+  def params(p: (String, String)*): Request[M, T] = {
+    this.copy(params = p.foldLeft(params) {
+      case (result, (key, value)) =>
+        result + (key -> (result.getOrElse(key, Seq.empty[String]) :+ value))
+    })
   }
 
-  def header(key: String, value: String): Request[M, T] = {
+  def header(h: (String, String)): Request[M, T] = {
+    val (key, value) = h
     this.copy(headers = headers + (key -> value))
   }
 
