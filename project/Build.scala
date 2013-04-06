@@ -31,7 +31,7 @@ object ScalaHttpClientBuild extends Build {
       version := "1.0",
       organization := "com.github.tototoshi",
       scalaVersion := "2.10.0",
-      scalacOptions ++= Seq("-feature"),
+      scalacOptions ++= Seq("-feature", "-deprecation"),
       libraryDependencies ++= Seq(
         "org.apache.httpcomponents" % "httpclient" % httpcomponentsVersion,
         "org.apache.httpcomponents" % "httpmime" % httpcomponentsVersion,

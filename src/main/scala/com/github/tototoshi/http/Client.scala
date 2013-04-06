@@ -23,7 +23,7 @@ import org.apache.http.NameValuePair
 
 class Client {
 
-  private def _client = {
+  private def _client: HttpClient = {
     val c = new DefaultHttpClient()
     val routePlanner = new ProxySelectorRoutePlanner(
       c.getConnectionManager.getSchemeRegistry, ProxySelector.getDefault)
@@ -31,10 +31,8 @@ class Client {
     c
   }
 
-  def get(url: String): RequestBuilder = new UrlEncodedGetRequest(_client, url)
+  def get(url: String): Request[GET, NonType] = new Request[GET, NonType](_client, url)
 
-  def post(url: String): RequestBuilder = new UrlEncodedPostRequest(_client, url)
-
-  def postMultiPart(url: String): MultiPartRequestBuilder = new MultiPartPostRequest(_client, url)
+  def post(url: String): Request[POST, FormUrlEncoded] = new Request[POST, FormUrlEncoded](_client, url)
 
 }

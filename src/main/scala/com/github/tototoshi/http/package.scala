@@ -27,5 +27,11 @@ package object http {
     def convert(key: String, value: File) = FilePart(key, value)
   }
 
+  implicit val multipartRequestExecutor = new MulitiPartRequestExecutor {}
+
+  implicit val formUrlEncodedRequestExecutor = new FormUrlEncodedExecutor {}
+
+  implicit val getRequestExecutor = new GetRequestExecutor {}
+
 }
 

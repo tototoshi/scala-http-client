@@ -15,21 +15,7 @@
  */
 package com.github.tototoshi.http
 
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.client.HttpClient
-import org.apache.http.client.utils.URIBuilder
-
-private[http] class UrlEncodedGetRequest(client: HttpClient, url: String)
-    extends RequestBuilder
-    with Request {
-
-  def execute(): Response = {
-    val uriBuilder = new URIBuilder(url)
-    params.foreach { case (name, value) => uriBuilder.setParameter(name, value) }
-    val request = new HttpGet(uriBuilder.build)
-    headers.foreach { case (k, v) => request.addHeader(k, v) }
-    new Response(client.execute(request))
-  }
-
-}
-
+sealed abstract class ContentType
+case class NonType() extends ContentType
+case class FormUrlEncoded() extends ContentType
+case class MultipartFormData() extends ContentType
