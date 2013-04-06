@@ -28,7 +28,7 @@ case class Request[M <: Method, T <: ContentType](
     params: Map[String, Seq[String]] = Map.empty,
     encoding: String = "utf-8") {
 
-  def part[A](key: String, value: A)(implicit converter: PartConverter[A]): Request[POST, MultipartFormData] = {
+  def part[A](key: String, value: A)(implicit e: M =:= POST, converter: PartConverter[A]): Request[POST, MultipartFormData] = {
     this.copy(parts = parts :+ converter.convert(key, value))
   }
 
