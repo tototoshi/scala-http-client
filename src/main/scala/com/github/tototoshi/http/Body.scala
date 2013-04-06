@@ -15,7 +15,12 @@
  */
 package com.github.tototoshi.http
 
-private[http] trait PartConverter[A] {
-  def convert(key: String, value: A): Part[A]
+import java.io.File
+
+private[http] sealed abstract trait Body[A] {
+  val key: String
+  val value: A
 }
+private[http] case class StringBody(key: String, value: String) extends Body[String]
+private[http] case class FileBody(key: String, value: File) extends Body[File]
 

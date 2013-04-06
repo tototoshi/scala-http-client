@@ -83,8 +83,7 @@ class ClientSpec extends FunSpec
       withMockServer(plan) { port =>
         new Client()
           .post[MultipartFormData](localhost(port) + "/upload")
-          .body("a" -> "b")
-          .body("file", new File("src/test/resources/upload-test.txt"))
+          .body("a" -> "b", "file" -> new File("src/test/resources/upload-test.txt"))
           .execute
           .asString should be("chakapoko chakapoko:b")
       }
