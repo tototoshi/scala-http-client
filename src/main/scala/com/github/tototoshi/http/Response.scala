@@ -15,6 +15,7 @@
  */
 package com.github.tototoshi.http
 
+import com.github.tototoshi.http.util.Using
 import org.apache.http.HttpResponse
 import org.apache.http.util.EntityUtils
 import java.io.File
