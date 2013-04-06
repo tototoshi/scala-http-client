@@ -21,58 +21,63 @@ trait RequestExecutor[M <: Method, T <: ContentType] {
 
 }
 
-trait GetRequestExecutor
-    extends RequestExecutor[GET, NonType] {
+trait URIBuilder {
 
-  import org.apache.http.client.utils.URIBuilder
+  def buildUrl(url: String, params: Map[String, Seq[String]]): java.net.URI = {
+    val uriBuilder = new org.apache.http.client.utils.URIBuilder(url)
+    for {
+      (name, values) <- params
+      value <- values
+    } {
+      uriBuilder.setParameter(name, value)
+    }
+    uriBuilder.build
+  }
+
+}
+
+trait GetRequestExecutor
+    extends RequestExecutor[GET, NonType]
+    with URIBuilder {
+
   import org.apache.http.client.methods.HttpGet
 
   def execute(request: Request[GET, NonType]): Response = {
-    val uriBuilder = new URIBuilder(request.url)
-    request.params.foreach { case (name, value) => uriBuilder.setParameter(name, value) }
-    val httpRequest = new HttpGet(uriBuilder.build)
+    val httpRequest = new HttpGet(buildUrl(request.url, request.params))
     request.headers.foreach { case (k, v) => httpRequest.addHeader(k, v) }
     new Response(request.client.execute(httpRequest))
   }
 
 }
 
-trait FormUrlEncodedExecutor extends RequestExecutor[POST, FormUrlEncoded] {
+trait FormUrlEncodedExecutor
+    extends RequestExecutor[POST, FormUrlEncoded]
+    with URIBuilder {
 
-  import org.apache.http.client.utils.URIBuilder
   import org.apache.http.client.methods.HttpPost
   import org.apache.http.client.entity.UrlEncodedFormEntity
   import org.apache.http.client.HttpClient
 
   def execute(request: Request[POST, FormUrlEncoded]): Response = {
-    val uriBuilder = new URIBuilder(request.url)
-    request.params.foreach { case (name, value) => uriBuilder.setParameter(name, value) }
-    val httpRequest = new HttpPost(uriBuilder.build)
+    val httpRequest = new HttpPost(buildUrl(request.url, request.params))
     request.headers.foreach { case (k, v) => httpRequest.addHeader(k, v) }
     new Response(request.client.execute(httpRequest))
   }
 
 }
 
-trait MulitiPartRequestExecutor extends RequestExecutor[POST, MultipartFormData] {
+trait MulitiPartRequestExecutor
+    extends RequestExecutor[POST, MultipartFormData]
+    with URIBuilder {
 
   import org.apache.http.client.HttpClient
   import org.apache.http.client.methods.HttpPost
-  import org.apache.http.client.utils.URIBuilder
   import org.apache.http.entity.mime.{ MultipartEntity, HttpMultipartMode }
   import org.apache.http.entity.mime.content.{ StringBody, FileBody }
 
   def execute(request: Request[POST, MultipartFormData]): Response = {
-
-    val url2 = {
-      val uriBuilder = new URIBuilder(request.url)
-      request.params.foreach { case (name, value) => uriBuilder.setParameter(name, value) }
-      uriBuilder.build
-    }
-
-    val httpRequest = new HttpPost(url2)
+    val httpRequest = new HttpPost(buildUrl(request.url, request.params))
     val reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE)
-
     request.headers.foreach { case (k, v) => httpRequest.addHeader(k, v) }
 
     for (part <- request.parts) {

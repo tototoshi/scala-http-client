@@ -25,7 +25,7 @@ case class Request[M <: Method, T <: ContentType](
     url: String,
     parts: Seq[Part[_]] = Seq.empty,
     headers: Map[String, String] = Map.empty,
-    params: Map[String, String] = Map.empty,
+    params: Map[String, Seq[String]] = Map.empty,
     encoding: String = "utf-8") {
 
   def part[A](key: String, value: A)(implicit converter: PartConverter[A]): Request[POST, MultipartFormData] = {
@@ -33,7 +33,7 @@ case class Request[M <: Method, T <: ContentType](
   }
 
   def param(key: String, value: String): Request[M, T] = {
-    this.copy(params = params + (key -> value))
+    this.copy(params = params + (key -> (params.getOrElse(key, Seq.empty[String]) :+ value)))
   }
 
   def header(key: String, value: String): Request[M, T] = {

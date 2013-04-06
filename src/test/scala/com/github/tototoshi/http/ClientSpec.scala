@@ -33,8 +33,8 @@ class ClientSpec extends FunSpec
   val plan = Planify {
     case UGET(Path("/foo")) => { ResponseString("foo") }
     case UPOST(Path("/bar")) => { ResponseString("bar") }
-    case UGET(Path("/params")) & Params(params) => { ResponseString(params("a").head) }
-    case UPOST(Path("/params")) & Params(params) => { ResponseString(params("a").head) }
+    case UGET(Path("/params")) & Params(params) => { ResponseString(params("a").mkString(",")) }
+    case UPOST(Path("/params")) & Params(params) => { ResponseString(params("a").mkString(",")) }
     case UPOST(Path("/upload")) & MultiPart(req) => {
       val MultipartData(params, files) = MultiPartParams.Memory(req)
       val fileContent = new String(files("file").head.bytes, "utf-8").trim
