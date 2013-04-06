@@ -65,7 +65,7 @@ class ClientSpec extends FunSpec
     it("should post") {
       withMockServer(plan) { port =>
         new Client()
-          .post(localhost(port) + "/bar")
+          .post[FormUrlEncoded](localhost(port) + "/bar")
           .execute.asString should be("bar")
       }
     }
@@ -73,7 +73,7 @@ class ClientSpec extends FunSpec
     it("should post with params") {
       withMockServer(plan) { port =>
         new Client()
-          .post(localhost(port) + "/params")
+          .post[FormUrlEncoded](localhost(port) + "/params")
           .params("a" -> "b")
           .execute.asString should be("b")
       }
@@ -82,9 +82,9 @@ class ClientSpec extends FunSpec
     it("should post multipart request") {
       withMockServer(plan) { port =>
         new Client()
-          .post(localhost(port) + "/upload")
-          .part("a" -> "b")
-          .part("file", new File("src/test/resources/upload-test.txt"))
+          .post[MultipartFormData](localhost(port) + "/upload")
+          .body("a" -> "b")
+          .body("file", new File("src/test/resources/upload-test.txt"))
           .execute
           .asString should be("chakapoko chakapoko:b")
       }

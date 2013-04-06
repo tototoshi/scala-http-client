@@ -44,6 +44,15 @@ trait FormUrlEncodedExecutor
   import org.apache.http.client.methods.HttpPost
   import org.apache.http.client.entity.UrlEncodedFormEntity
   import org.apache.http.client.HttpClient
+  import java.util.{ ArrayList, List => JList }
+  import org.apache.http.message.BasicNameValuePair
+  import org.apache.http.NameValuePair
+
+  protected def constructNameValuePairs(data: Iterable[(String, String)]): JList[NameValuePair] = {
+    data.foldLeft(new ArrayList[NameValuePair](data.size)) {
+      case (pairs, (k, v)) => { pairs.add(new BasicNameValuePair(k, v)); pairs }
+    }
+  }
 
   def execute(request: Request[POST, FormUrlEncoded]): Response = {
     val httpRequest = new HttpPost(buildURI(request.url, request.params))

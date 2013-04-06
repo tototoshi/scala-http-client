@@ -33,6 +33,6 @@ class Client {
 
   def get(url: String): Request[GET, NonType] = new Request[GET, NonType](_client, url)
 
-  def post(url: String): Request[POST, FormUrlEncoded] = new Request[POST, FormUrlEncoded](_client, url)
+  def post[A <: ContentType](url: String): Request[POST, A] = new Request[POST, A](_client, url)
 
 }

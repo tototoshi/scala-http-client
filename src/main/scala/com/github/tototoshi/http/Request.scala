@@ -16,19 +16,16 @@
 package com.github.tototoshi.http
 
 import org.apache.http.client.HttpClient
-import java.util.{ ArrayList, List => JList }
-import org.apache.http.message.BasicNameValuePair
-import org.apache.http.NameValuePair
 
 case class Request[M <: Method, T <: ContentType](
     client: HttpClient,
     url: String,
+    params: Map[String, Seq[String]] = Map.empty,
     parts: Seq[Part[_]] = Seq.empty,
     headers: Map[String, String] = Map.empty,
-    params: Map[String, Seq[String]] = Map.empty,
     encoding: String = "utf-8") {
 
-  def part[A](p: (String, A))(implicit e: M =:= POST, converter: PartConverter[A]): Request[POST, MultipartFormData] = {
+  def body[A](p: (String, A))(implicit e: M =:= POST, converter: PartConverter[A]): Request[POST, T] = {
     val (key, value) = p
     this.copy(parts = parts :+ converter.convert(key, value))
   }
@@ -47,12 +44,6 @@ case class Request[M <: Method, T <: ContentType](
 
   def encoding(e: String): Request[M, T] = {
     this.copy(encoding = encoding)
-  }
-
-  protected def constructNameValuePairs(data: Iterable[(String, String)]): JList[NameValuePair] = {
-    data.foldLeft(new ArrayList[NameValuePair](data.size)) {
-      case (pairs, (k, v)) => { pairs.add(new BasicNameValuePair(k, v)); pairs }
-    }
   }
 
   def execute()(implicit executor: RequestExecutor[M, T]): Response = {
